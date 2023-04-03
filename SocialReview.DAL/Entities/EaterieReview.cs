@@ -29,7 +29,7 @@ namespace SocialReview.DAL.Entities
         [Range(1, 5)]
         public int Cleanness { get; set; }
 
-        public string Message { get; set; } = string.Empty;
+        public string? Message { get; set; } = string.Empty;
 
         [Required]
         public DateTime ReviewDate { get; set; }
@@ -40,8 +40,7 @@ namespace SocialReview.DAL.Entities
         [ForeignKey("EstablishmentId")]
         public Guid EstablishmentId { get; set;}
 
-        public User User { get; set; }
-
+        public Customer User { get; set; }
         public Establishment Establishment { get; set; }
     }
 }

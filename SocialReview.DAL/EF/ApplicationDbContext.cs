@@ -9,6 +9,7 @@ namespace SocialReview.DAL.EF
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Establishment> Establishments { get; set; }
         public DbSet<EstablishmentPhoto> EstablishmentPhotos { get; set; }
         public DbSet<EaterieReview> EaterieReviews { get; set; }
@@ -22,7 +23,7 @@ namespace SocialReview.DAL.EF
         { 
             base.OnModelCreating(builder);
 
-            builder.Entity<User>()
+            builder.Entity<Customer>()
                 .HasMany<EaterieReview>()
                 .WithOne(e => e.User)
                 .HasForeignKey(k => k.UserId);
@@ -36,6 +37,17 @@ namespace SocialReview.DAL.EF
                 .HasMany<EstablishmentPhoto>()
                 .WithOne(e => e.Establishment)
                 .HasForeignKey(c => c.EstablishmentId);
+
+            builder.Entity<Customer>()
+                .HasOne<User>()
+                .WithOne(c => c.Customer)
+                .HasForeignKey<User>(c => c.CustomerId);
+
+            builder.Entity<Establishment>()
+                .HasOne<User>()
+                .WithOne(c => c.Establishment)
+                .HasForeignKey<User>(c => c.EstablishmentId);
+
         }
     }
 }

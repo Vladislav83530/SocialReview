@@ -15,22 +15,17 @@ namespace SocialReview.DAL.Entities
         [Required]
         public string Description { get; set; } = string.Empty;
 
-        public string Photo { get; set; } = string.Empty;
+        [Required]
+        public string Email { get; set; } = string.Empty;
+
+        public string? MainPhoto { get; set; } = string.Empty;
 
         [Required]
         public string City { get; set; } = string.Empty;
 
         [Required]
         public string Address { get; set; } = string.Empty;
-        public string PhoneNumber { get; set;} = string.Empty;
 
-        [Required]
-        public string Email { get; set;} = string.Empty;
-
-        [Required]
-        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
-
-        [Required]
-        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
+        public string? PhoneNumber { get; set;} = string.Empty;
     }
 }
