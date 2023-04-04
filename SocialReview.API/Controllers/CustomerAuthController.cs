@@ -10,12 +10,10 @@ namespace SocialReview.API.Controllers
     public class CustomerAuthController : ControllerBase
     {
         private readonly ICustomerAuthService _authService;
-        private readonly IUserRepository _userRepository;
 
-        public CustomerAuthController(ICustomerAuthService authService, IUserRepository userRepository)
+        public CustomerAuthController(ICustomerAuthService authService)
         {
             _authService = authService;
-            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -29,12 +27,7 @@ namespace SocialReview.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isRegistered = await _userRepository.IsRegisteredAsync(request.Email);
-            if (isRegistered)
-                return BadRequest($"Customer with email {request.Email} is registered.");
-
             var customer = await _authService.RegisterAsync(request);
-
             return Ok(customer);
         }
     }

@@ -22,12 +22,17 @@ namespace SocialReview.BLL.Authentication.Services
         }
 
         /// <summary>
-        /// Registers a new customer using the provided request data.
+        /// Registers a new customer using the provided request.
         /// </summary>
-        /// <param name="request">A CustomerRegisterDto object containing the registration data.</param>
-        /// <returns>A Customer object representing the newly registered customer.</returns>
+        /// <param name="request">The customer registration request.</param>
+        /// <returns>The registered customer.</returns>
+        /// <exception cref="ArgumentException">Thrown if an customer with the provided email is already registered.</exception>
         public async Task<Customer> RegisterAsync(CustomerRegisterDto request)
         {
+            var isRegistered = await _userRepository.IsRegisteredAsync(request.Email);
+            if (isRegistered)
+               throw new ArgumentException($"Customer with email {request.Email} is registered.");
+
             _securityService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             Customer customer = _mapper.Map<Customer>(request);

@@ -10,12 +10,10 @@ namespace SocialReview.API.Controllers
     public class EstablishmentAuthController : ControllerBase
     {
         private readonly IEstablishmentAuthService _authService;
-        private readonly IUserRepository _userRepository;
 
-        public EstablishmentAuthController(IEstablishmentAuthService authService, IUserRepository userRepository)
+        public EstablishmentAuthController(IEstablishmentAuthService authService)
         {
             _authService = authService;
-            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -29,12 +27,7 @@ namespace SocialReview.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isRegistered = await _userRepository.IsRegisteredAsync(request.Email);
-            if (isRegistered)
-                return BadRequest($"Establishment with email {request.Email} is registered.");
-
             var establishment = await _authService.RegisterAsync(request);
-
             return Ok(establishment);
         }
     }

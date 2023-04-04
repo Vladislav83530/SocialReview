@@ -22,12 +22,17 @@ namespace SocialReview.BLL.Authentication.Services
         }
 
         /// <summary>
-        /// Registers a new establishment using the provided request data.
+        /// Registers a new establishment using the provided request.
         /// </summary>
-        /// <param name="request">A EstablishmentRegisterDto object containing the registration data.</param>
-        /// <returns>A Establishment object representing the newly registered establishment.</returns>
+        /// <param name="request">The establishment registration request.</param>
+        /// <returns>The registered establishment.</returns>
+        /// <exception cref="ArgumentException">Thrown if an establishment with the provided email is already registered.</exception>
         public async Task<Establishment> RegisterAsync(EstablishmentRegisterDto request)
         {
+            var isRegistered = await _userRepository.IsRegisteredAsync(request.Email);
+            if (isRegistered)
+                throw new ArgumentException($"Establishment with email {request.Email} is registered.");
+
             _securityService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             Establishment establishment = _mapper.Map<Establishment>(request);
