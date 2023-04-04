@@ -45,5 +45,18 @@ namespace SocialReview.BLL.Authentication.Services
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == normalizeEmail);
             return user != null;
         }
+
+        /// <summary>
+        /// Find User by email
+        /// </summary>
+        /// <param name="email">The email to search.</param>
+        /// <returns>User if user is registered, else null</returns>
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            string normalizeEmail = email.ToLower();
+            var user = _dbContext.Users.FirstOrDefault(x=>x.Email == normalizeEmail);
+
+            return user != null ? user : null;
+        }
     }
 }

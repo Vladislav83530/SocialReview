@@ -9,9 +9,9 @@ namespace SocialReview.API.Controllers
     [Route("api/[controller]")]
     public class CustomerAuthController : ControllerBase
     {
-        private readonly ICustomerAuthService _authService;
+        private readonly IAuthService _authService;
 
-        public CustomerAuthController(ICustomerAuthService authService)
+        public CustomerAuthController(IAuthService authService)
         {
             _authService = authService;
         }
@@ -25,10 +25,25 @@ namespace SocialReview.API.Controllers
         public async Task<ActionResult<Customer>> CustomerRegister(CustomerRegisterDto request)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("Wrong request model");
 
-            var customer = await _authService.RegisterAsync(request);
+            var customer = await _authService.RegisterAsync<Customer, CustomerRegisterDto>(request);
             return Ok(customer);
+        }
+
+        /// <summary>
+        /// Logs in a user with the provided email and password.
+        /// </summary>
+        /// <param name="request">The user login data transfer object containing the email and password.</param>
+        /// <returns>An ActionResult containing a token for the authenticated user or a BadRequest if the model state is invalid.</returns>
+        [HttpPost("customer-login")]
+        public async Task<ActionResult<string>> CustomerLogin(UserCredentialsDto request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest($"Wrong request model");
+
+            var token = await _authService.LoginAsync(request);
+            return Ok(token);
         }
     }
 }
