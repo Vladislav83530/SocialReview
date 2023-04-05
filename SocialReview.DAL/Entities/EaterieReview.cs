@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SocialReview.DAL.Entities
 {
     [Table("EaterieReviews")]
-    public class EaterieReview
+    public class EaterieReview : Review
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required]
         [Range(1, 5)]
         public int FoodQuality { get; set; }
@@ -28,20 +25,5 @@ namespace SocialReview.DAL.Entities
         [Required]
         [Range(1, 5)]
         public int Cleanness { get; set; }
-
-        public string Message { get; set; } = string.Empty;
-
-        [Required]
-        public DateTime ReviewDate { get; set; }
-
-        [ForeignKey("UserId")]
-        public Guid UserId { get; set; }
-
-        [ForeignKey("EstablishmentId")]
-        public Guid EstablishmentId { get; set;}
-
-        public User User { get; set; }
-
-        public Establishment Establishment { get; set; }
     }
 }
