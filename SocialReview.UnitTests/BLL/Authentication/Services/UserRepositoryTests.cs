@@ -72,6 +72,30 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         }
 
         [Test]
+        public async Task IsRegisteredByPhoneNumberAsync_ForRegisteredUser_True()
+        {
+            var phoneNumber = "+380964781414";
+            var user = _dataGenerator.GenerateCustomer();
+            user.PhoneNumber = phoneNumber;
+            await _dbContext.Customers.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _userRepository.IsRegisteredByPhoneNumberAsync(phoneNumber);
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public async Task IsRegisteredByPhoneNumberAsync_ForUnregisteredUser_False()
+        {
+            var phoneNumber = "+380671111111";
+
+            var result = await _userRepository.IsRegisteredAsync(phoneNumber);
+
+            Assert.IsFalse(result);
+        }
+
+        [Test]
         public async Task GetUserByEmailAsync_UserIsExists_User()
         {
             var email = "test@test.com";

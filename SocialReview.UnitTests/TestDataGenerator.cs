@@ -30,7 +30,8 @@ namespace SocialReview.UnitTests
             return new UserCredentialsDto
             {
                 Email = _faker.Internet.Email(),
-                Password = _faker.Internet.Password()
+                Password = _faker.Internet.Password(),
+                PhoneNumber = _faker.Phone.PhoneNumber("+380#########")
             };
         }
 
@@ -80,6 +81,15 @@ namespace SocialReview.UnitTests
                 PasswordHash = new byte[] { 1, 2, 3 },
                 PasswordSalt = new byte[] { 4, 5, 6 },
                 Role = Role.Customer
+            };
+        }
+
+        public UserLoginDto GenerateUserLoginDto()
+        {
+            return new UserLoginDto
+            {
+                Email = _faker.Internet.Email(),
+                Password = _faker.Internet.Password(),
             };
         }
     }

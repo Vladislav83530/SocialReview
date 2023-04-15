@@ -37,7 +37,7 @@ namespace SocialReview.API.Controllers
         /// <param name="request">The user login data transfer object containing the email and password.</param>
         /// <returns>An ActionResult containing a token for the authenticated user or a BadRequest if the model state is invalid.</returns>
         [HttpPost("establishment-login")]
-        public async Task<ActionResult<string>> EstablishmentLogin(UserCredentialsDto request)
+        public async Task<ActionResult<string>> EstablishmentLogin(UserLoginDto request)
         {
             if (!ModelState.IsValid)
                 return BadRequest($"Wrong request model");

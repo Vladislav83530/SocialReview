@@ -11,11 +11,18 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
     internal class SecurityServiceTests
     {
         private SecurityService _securityService;
+        private IConfiguration _configuration;
 
         [SetUp] 
         public void SetUp() 
         {
-            _securityService = new SecurityService();
+            _configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "AppSettings:Token", "5266556A586E3272357538782F413F44" }
+            })
+            .Build();
+            _securityService = new SecurityService(_configuration);
         }
 
         [Test]
@@ -51,17 +58,18 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         [Test]
         public void CreateToken_WhenCalled_ReturnsToken()
         {
-            var user = new User { Email = "test@test.com", Role = Role.Customer };
-            var securityService = new SecurityService();
+            var user = new User { Email = "test@example.com", Role = Role.Customer };
+            var expectedEmailClaim = new Claim(ClaimTypes.Email, user.Email);
+            var expectedRoleClaim = new Claim(ClaimTypes.Role, user.Role.ToString());
 
-            var result = securityService.CreateToken(user);
-
-            Assert.That(result, Is.Not.Null);
+            var token = _securityService.CreateToken(user);
             var handler = new JwtSecurityTokenHandler();
-            Assert.IsTrue(handler.CanReadToken(result));
-            var token = handler.ReadJwtToken(result);
-            Assert.AreEqual(user.Email, token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value);
-            Assert.AreEqual(user.Role.ToString(), token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value);
+            var jwtToken = handler.ReadJwtToken(token);
+            var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+            Assert.AreEqual(expectedEmailClaim.Value, emailClaim.Value);
+            Assert.AreEqual(expectedRoleClaim.Value, roleClaim.Value);
         }
 
         [Test]
