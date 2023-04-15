@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using SocialReview.BLL.Authentication.Interfaces;
 using SocialReview.DAL.Entities;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,6 +14,13 @@ namespace SocialReview.BLL.Authentication.Services
     /// </summary>
     public class SecurityService : ISecurityService
     {
+        private readonly IConfiguration _config;
+
+        public SecurityService(IConfiguration config)
+        {
+            _config = config;
+        }
+
         /// <summary>
         /// Creates a password hash and salt using the HMACSHA512 hashing algorithm.
         /// </summary>
@@ -41,14 +49,10 @@ namespace SocialReview.BLL.Authentication.Services
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
 
-            var key = new byte[64];
-            using (var generator = RandomNumberGenerator.Create())
-            {
-                generator.GetBytes(key);
-            }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _config.GetSection("AppSettings:Token").Value));
 
-            var securityKey = new SymmetricSecurityKey(key);
-            var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
                 claims: claims,

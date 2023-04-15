@@ -35,6 +35,10 @@ namespace SocialReview.BLL.Authentication.Services
             if (isRegistered)
                 throw new ArgumentException($"{typeof(T).Name} with email {request.Email} is registered.");
 
+            var isRegisteredByPhoneNumber = await _userRepository.IsRegisteredByPhoneNumberAsync(request.PhoneNumber);
+            if(isRegisteredByPhoneNumber)
+                throw new ArgumentException($"{typeof(T).Name} with phone number {request.PhoneNumber} is registered.");
+
             _securityService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             var entity = _mapper.Map<T>(request);
@@ -57,7 +61,7 @@ namespace SocialReview.BLL.Authentication.Services
         /// <param name="userLoginDto">The user login data transfer object containing the email and password.</param>
         /// <returns>A token for the authenticated user.</returns>
         /// <exception cref="ArgumentException">Thrown if the user is not registered or if the password is incorrect.</exception>
-        public async Task<string> LoginAsync(UserCredentialsDto userLoginDto)
+        public async Task<string> LoginAsync(UserLoginDto userLoginDto)
         {
             var isRegistered = await _userRepository.IsRegisteredAsync(userLoginDto.Email);
             if (!isRegistered)

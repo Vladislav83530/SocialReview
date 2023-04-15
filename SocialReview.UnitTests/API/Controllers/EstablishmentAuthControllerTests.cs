@@ -57,7 +57,7 @@ namespace SocialReview.UnitTests.API.Controllers
         [Test]
         public async Task EstablishmentLogin_WithValidModel_ReturnsOk()
         {
-            var request = _dataGenerator.GenerateUserCredentialsDto();
+            var request = _dataGenerator.GenerateUserLoginDto();
             var token = "test token";
 
             _authServiceMock.Setup(x => x.LoginAsync(request)).ReturnsAsync(token);
@@ -71,7 +71,7 @@ namespace SocialReview.UnitTests.API.Controllers
         [Test]
         public async Task EstablishmentLogin_WithInvalidModel_ReturnsBadRequest()
         {
-            var request = _dataGenerator.GenerateUserCredentialsDto();
+            var request = _dataGenerator.GenerateUserLoginDto();
             _controller.ModelState.AddModelError("error", "Wrong request model");
 
             var result = await _controller.EstablishmentLogin(request);

@@ -58,5 +58,17 @@ namespace SocialReview.BLL.Authentication.Services
 
             return user != null ? user : null;
         }
+
+        /// <summary>
+        /// Checks if a User with the given phoneNumber is registered.
+        /// </summary>
+        /// <param name="email">The phone number to check.</param>
+        /// <returns>True if the User is registered, false otherwise.</returns>
+        public async Task<bool> IsRegisteredByPhoneNumberAsync(string phoneNumber)
+        {
+            Customer customer = await _dbContext.Customers.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+            Establishment establishment = await _dbContext.Establishments.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+            return (customer != null || establishment != null);
+        }
     }
 }

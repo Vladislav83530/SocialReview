@@ -55,9 +55,19 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         }
 
         [Test]
+        public async Task RegisterAsync_UserIsAlreadyRegisteredCheckPhoneNumber_ThrowsArgumentException()
+        {
+            var request = _dataGenerator.GenerateCustomerRegisterDto();
+            _mockUserRepository.Setup(x => x.IsRegisteredByPhoneNumberAsync(request.PhoneNumber))
+                .ReturnsAsync(true);
+
+            Assert.ThrowsAsync<ArgumentException>(() => _authService.RegisterAsync<Customer, CustomerRegisterDto>(request));
+        }
+
+        [Test]
         public async Task LoginAsync_UserIsNotRegistered_ThrowsArgumentException()
         {
-            var request = _dataGenerator.GenerateUserCredentialsDto();
+            var request = _dataGenerator.GenerateUserLoginDto();
             _mockUserRepository.Setup(x => x.IsRegisteredAsync(request.Email))
                 .ReturnsAsync(false);
 
@@ -67,7 +77,7 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         [Test]
         public async Task LoginAsync_PasswordIsIncorect_ThrowsArgumentException()
         {
-            var request = _dataGenerator.GenerateUserCredentialsDto();
+            var request = _dataGenerator.GenerateUserLoginDto();
             var user = new User { Email = request.Email, PasswordHash = new byte[0], PasswordSalt = new byte[0] };
 
             _mockUserRepository.Setup(x=>x.IsRegisteredAsync(request.Email))
@@ -83,7 +93,7 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         [Test]
         public async Task LoginAsync_CredentialsAreCorrect_ReturnsToken()
         {
-            var request = _dataGenerator.GenerateUserCredentialsDto();
+            var request = _dataGenerator.GenerateUserLoginDto();
             var user = new User { Email = request.Email, PasswordHash = new byte[0], PasswordSalt = new byte[0] };
             var token = "token";
             _mockUserRepository.Setup(x => x.IsRegisteredAsync(request.Email))
