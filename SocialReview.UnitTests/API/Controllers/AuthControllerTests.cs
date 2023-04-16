@@ -9,17 +9,17 @@ using SocialReview.DAL.Entities;
 namespace SocialReview.UnitTests.API.Controllers
 {
     [TestFixture]
-    internal class CustomerAuthControllerTests
+    internal class AuthControllerTests
     {
         private Mock<IAuthService> _authServiceMock;
-        private CustomerAuthController _controller;
+        private AuthController _controller;
         private TestDataGenerator _dataGenerator;
 
         [SetUp]
         public void Setup()
         {
             _authServiceMock = new Mock<IAuthService>();
-            _controller = new CustomerAuthController(_authServiceMock.Object);
+            _controller = new AuthController(_authServiceMock.Object);
             _dataGenerator = new TestDataGenerator();
         }
 
@@ -75,6 +75,38 @@ namespace SocialReview.UnitTests.API.Controllers
             _controller.ModelState.AddModelError("error", "Wrong request model");
 
             var result = await _controller.CustomerLogin(request);
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(result.Result);
+        }
+
+        [Test]
+        public async Task EstablishmentRegister_WithValidModel_ReturnOk()
+        {
+            var request = _dataGenerator.GenerateEstablishmentRegisterDto();
+            var establishment = _dataGenerator.GenerateEstablishment();
+            establishment.Name = request.Name;
+            establishment.Description = request.Description;
+            establishment.City = request.City;
+            establishment.Email = request.Email;
+            establishment.PhoneNumber = request.PhoneNumber;
+
+            _authServiceMock.Setup(x =>
+            x.RegisterAsync<Establishment, EstablishmentRegisterDto>(request))
+                .ReturnsAsync(establishment);
+
+            var result = await _controller.EstablishmentRegister(request);
+
+            Assert.IsInstanceOf<OkObjectResult>(result.Result);
+            Assert.That((result.Result as OkObjectResult).Value, Is.EqualTo(establishment));
+        }
+
+        [Test]
+        public async Task EstablishmentRegister_WithInvalidModel_ReturnsBadRequest()
+        {
+            var request = _dataGenerator.GenerateEstablishmentRegisterDto();
+            _controller.ModelState.AddModelError("error", "Wrong request model");
+
+            var result = await _controller.EstablishmentRegister(request);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(result.Result);
         }
