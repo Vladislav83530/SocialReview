@@ -65,7 +65,7 @@ namespace SocialReview.BLL.Authentication.Services
         {
             var isRegistered = await _userRepository.IsRegisteredAsync(userLoginDto.Email);
             if (!isRegistered)
-                throw new ArgumentException($"Customer with email {userLoginDto.Email} is nor registered.");
+                throw new ArgumentException($"Customer with email {userLoginDto.Email} is not registered.");
 
             var user = await _userRepository.GetUserByEmailAsync(userLoginDto.Email);
 
