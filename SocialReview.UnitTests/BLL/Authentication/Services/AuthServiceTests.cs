@@ -11,7 +11,7 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
     internal class AuthServiceTests
     {
         private Mock<ISecurityService> _mockSecurityService;
-        private Mock<IUserRepository> _mockUserRepository;
+        private Mock<IUserAuthService> _mockUserRepository;
         private Mock<IMapper> _mockMapper;
         private AuthService _authService;
         private TestDataGenerator _dataGenerator;
@@ -20,7 +20,7 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         public void SetUp()
         {
             _mockSecurityService = new Mock<ISecurityService>();
-            _mockUserRepository = new Mock<IUserRepository>();
+            _mockUserRepository = new Mock<IUserAuthService>();
             _mockMapper = new Mock<IMapper>();
             _authService = new AuthService(_mockSecurityService.Object, _mockUserRepository.Object, _mockMapper.Object);
             _dataGenerator = new TestDataGenerator();

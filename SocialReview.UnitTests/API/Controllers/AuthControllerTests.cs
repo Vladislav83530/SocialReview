@@ -30,8 +30,6 @@ namespace SocialReview.UnitTests.API.Controllers
             var customer = _dataGenerator.GenerateCustomer();
             customer.FirstName = request.FirstName;
             customer.LastName = request.LastName;
-            customer.Email = request.Email;
-            customer.PhoneNumber = request.PhoneNumber;
 
             _authServiceMock.Setup(x => 
             x.RegisterAsync<Customer, CustomerRegisterDto>(request))
@@ -87,8 +85,6 @@ namespace SocialReview.UnitTests.API.Controllers
             establishment.Name = request.Name;
             establishment.Description = request.Description;
             establishment.City = request.City;
-            establishment.Email = request.Email;
-            establishment.PhoneNumber = request.PhoneNumber;
 
             _authServiceMock.Setup(x =>
             x.RegisterAsync<Establishment, EstablishmentRegisterDto>(request))

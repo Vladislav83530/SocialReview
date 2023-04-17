@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SocialReview.DAL.Entities
 {
     [Table("EaterieReviews")]
-    public class EaterieReview : Review
+    public class EaterieReview
     {
+        [Key]
+        public Guid Id { get; set; }
+
         [Required]
         [Range(1, 5)]
         public int FoodQuality { get; set; }
@@ -25,5 +28,10 @@ namespace SocialReview.DAL.Entities
         [Required]
         [Range(1, 5)]
         public int Cleanness { get; set; }
+
+        [ForeignKey("ReviewId")]
+        public Guid ReviewId { get; set; }  
+
+        public Review Review { get; set; }
     }
 }

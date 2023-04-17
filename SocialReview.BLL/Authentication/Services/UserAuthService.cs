@@ -8,11 +8,11 @@ namespace SocialReview.BLL.Authentication.Services
     /// <summary>
     /// A repository for managing User data.
     /// </summary>
-    public class UserRepository : IUserRepository
+    public class UserAuthService : IUserAuthService
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public UserRepository(ApplicationDbContext dbContext)
+        public UserAuthService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -25,9 +25,9 @@ namespace SocialReview.BLL.Authentication.Services
         /// <param name="userInfo">The user information to save.</param>
         public async Task SaveUserAsync<T>(User user, T userInfo)
         {
-            if(userInfo is Customer)
+            if (userInfo is Customer)
                 _dbContext.Customers.Add(userInfo as Customer);
-            if(userInfo is Establishment)
+            if (userInfo is Establishment)
                 _dbContext.Establishments.Add(userInfo as Establishment);
 
             _dbContext.Users.Add(user);
@@ -54,7 +54,7 @@ namespace SocialReview.BLL.Authentication.Services
         public async Task<User> GetUserByEmailAsync(string email)
         {
             string normalizeEmail = email.ToLower();
-            var user = _dbContext.Users.FirstOrDefault(x=>x.Email == normalizeEmail);
+            var user = _dbContext.Users.FirstOrDefault(x => x.Email == normalizeEmail);
 
             return user != null ? user : null;
         }
@@ -66,9 +66,8 @@ namespace SocialReview.BLL.Authentication.Services
         /// <returns>True if the User is registered, false otherwise.</returns>
         public async Task<bool> IsRegisteredByPhoneNumberAsync(string phoneNumber)
         {
-            Customer customer = await _dbContext.Customers.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
-            Establishment establishment = await _dbContext.Establishments.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
-            return (customer != null || establishment != null);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+            return user != null;
         }
     }
 }

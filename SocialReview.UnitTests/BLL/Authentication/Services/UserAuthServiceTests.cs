@@ -5,10 +5,10 @@ using SocialReview.DAL.EF;
 namespace SocialReview.UnitTests.BLL.Authentication.Services
 {
     [TestFixture]
-    internal class UserRepositoryTests
+    internal class UserAuthServiceTests
     {
         private ApplicationDbContext _dbContext;
-        private UserRepository _userRepository;
+        private UserAuthService _userRepository;
         private TestDataGenerator _dataGenerator;
 
         [SetUp]
@@ -18,7 +18,7 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
                 .UseInMemoryDatabase(databaseName: "TestDb")
                 .Options;
             _dbContext = new ApplicationDbContext(options);
-            _userRepository = new UserRepository(_dbContext);
+            _userRepository = new UserAuthService(_dbContext);
             _dataGenerator = new TestDataGenerator();
         }
 
@@ -33,7 +33,6 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         {
             var user = _dataGenerator.GenerateUser();
             var customerInfo = _dataGenerator.GenerateCustomer();
-            customerInfo.Email = user.Email;
             user.CustomerId = customerInfo.Id;
 
             await _userRepository.SaveUserAsync(user, customerInfo);
@@ -75,9 +74,9 @@ namespace SocialReview.UnitTests.BLL.Authentication.Services
         public async Task IsRegisteredByPhoneNumberAsync_ForRegisteredUser_True()
         {
             var phoneNumber = "+380964781414";
-            var user = _dataGenerator.GenerateCustomer();
+            var user = _dataGenerator.GenerateUser();
             user.PhoneNumber = phoneNumber;
-            await _dbContext.Customers.AddAsync(user);
+            await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
 
             var result = await _userRepository.IsRegisteredByPhoneNumberAsync(phoneNumber);

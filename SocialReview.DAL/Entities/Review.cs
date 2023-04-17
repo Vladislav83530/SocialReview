@@ -13,11 +13,11 @@ namespace SocialReview.DAL.Entities
         [Required]
         public DateTime ReviewDate { get; set; }
 
-        [ForeignKey("UserId")]
-        public Guid UserId { get; set; }
+        [ForeignKey("CustomerId")]
+        public Guid CustomerId { get; set; }
 
         [ForeignKey("EstablishmentId")]
-        public Guid EstablishmentId { get; set; }
+        public Guid EstablishmentId { get; set; } 
 
         public Customer User { get; set; }
         public Establishment Establishment { get; set; }

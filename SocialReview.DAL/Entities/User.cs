@@ -7,8 +7,13 @@ namespace SocialReview.DAL.Entities
     public class User
     {
         [Key]
+        public Guid UserId { get; set; }
+
         [Required]
         public string Email { get; set; } = string.Empty;
+
+        [Required]
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required]
         public byte[] PasswordHash { get; set; }
@@ -19,8 +24,11 @@ namespace SocialReview.DAL.Entities
         [Required]
         public Role Role { get; set; }
 
+        [ForeignKey("CustomerId")]
         public Guid? CustomerId { get; set; }
         public Customer? Customer { get; set; }
+
+        [ForeignKey("EstablishmentId")]
         public Guid? EstablishmentId { get; set; }
         public Establishment? Establishment { get; set; }
     }

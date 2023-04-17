@@ -2,7 +2,7 @@
 
 namespace SocialReview.BLL.Authentication.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserAuthService
     {
         Task SaveUserAsync<T>(User user, T userInfo);
         Task<bool> IsRegisteredAsync(string email);

@@ -11,10 +11,10 @@ namespace SocialReview.BLL.Authentication.Services
     public class AuthService : IAuthService
     {
         private readonly ISecurityService _securityService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserAuthService _userRepository;
         private readonly IMapper _mapper;
 
-        public AuthService(ISecurityService securityService, IUserRepository userRepository, IMapper mapper)
+        public AuthService(ISecurityService securityService, IUserAuthService userRepository, IMapper mapper)
         {
             _securityService = securityService;
             _userRepository = userRepository;
