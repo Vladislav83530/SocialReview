@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SocialReview.API.Attributes;
 using System.Security.Claims;
 
 namespace SocialReview.API.Controllers
@@ -16,6 +17,7 @@ namespace SocialReview.API.Controllers
         }
 
         [HttpGet("get-custname"), Authorize(Roles = "Customer")]
+        [Verify(true)]
         public async Task<ActionResult<string>> GetMe()
         {
             var result = string.Empty;

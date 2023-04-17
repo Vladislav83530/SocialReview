@@ -24,6 +24,9 @@ namespace SocialReview.DAL.Entities
         [Required]
         public Role Role { get; set; }
 
+        [Required]
+        public bool IsVerified { get; set; }
+
         [ForeignKey("CustomerId")]
         public Guid? CustomerId { get; set; }
         public Customer? Customer { get; set; }

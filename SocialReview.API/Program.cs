@@ -8,6 +8,9 @@ using SocialReview.API.Middlewares.RequestLoggingMiddleware;
 using SocialReview.API.Middlewares.RequestLoggingMiddleware.Abstract;
 using SocialReview.BLL.Authentication.Interfaces;
 using SocialReview.BLL.Authentication.Services;
+using SocialReview.BLL.Verification.Authenticator;
+using SocialReview.BLL.Verification.Interfaces;
+using SocialReview.BLL.Verification.Services;
 using SocialReview.DAL.EF;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
@@ -51,6 +54,9 @@ builder.Services.AddScoped<IHttpExceptionHandlerStrategy, DefaultHttpExceptionHa
 // Register the request logging services with the dependency injection container
 builder.Services.AddScoped<RequestLoggingMiddleware>();
 builder.Services.AddScoped<ILogMessageBuilder, DefaultLogMessageBuilder>();
+
+builder.Services.AddScoped<IVerificationService, VerificationService>();
+builder.Services.AddSingleton<IVerificationFactory, AuthenticatorVerificationFactory>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => {
