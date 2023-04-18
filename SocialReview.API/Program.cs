@@ -1,25 +1,14 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SocialReview.API;
 using SocialReview.API.Middlewares.ExceptionHandlingMiddleware;
-using SocialReview.API.Middlewares.ExceptionHandlingMiddleware.Abstract;
 using SocialReview.API.Middlewares.RequestLoggingMiddleware;
-using SocialReview.API.Middlewares.RequestLoggingMiddleware.Abstract;
-using SocialReview.BLL.Authentication.Interfaces;
-using SocialReview.BLL.Authentication.Services;
-using SocialReview.BLL.EmailSender.Email;
-using SocialReview.BLL.EmailSender.Interfaces;
-using SocialReview.BLL.Verification.Interfaces;
-using SocialReview.BLL.Verification.Services;
 using SocialReview.DAL.EF;
 using Swashbuckle.AspNetCore.Filters;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -38,49 +27,15 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-// Add database context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IUserAuthService, UserAuthService>();
-builder.Services.AddScoped<ISecurityService, SecurityService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddMiddlewares();
+builder.Services.AddEmailSender(builder.Configuration);
 
-// Register the error handling services with the dependency injection container
-builder.Services.AddScoped<ExceptionHandlingMiddleware>();
-builder.Services.AddScoped<IErrorFactory, DefaultErrorFactory>();
-builder.Services.AddScoped<IExceptionHandler, DefaultExceptionHandler>();
-builder.Services.AddScoped<IHttpExceptionHandlerStrategy, DefaultHttpExceptionHandlerStrategy>();
-
-// Register the request logging services with the dependency injection container
-builder.Services.AddScoped<RequestLoggingMiddleware>();
-builder.Services.AddScoped<ILogMessageBuilder, DefaultLogMessageBuilder>();
-
-builder.Services.AddScoped<IUserVerifyService, UserVerifyService>();
-builder.Services.AddTransient<IEmailSender, SmtpEmailSender>(provider => new SmtpEmailSender(
-       fromAddress: builder.Configuration["Email:FromAddress"],
-       fromName: builder.Configuration["Email:FromName"],
-       fromPassword: builder.Configuration["Email:FromPassword"],
-       smtpHost: builder.Configuration["Email:SmtpHost"],
-       smtpPort: int.Parse(builder.Configuration["Email:SmtpPort"])
-   ));
-builder.Services.AddScoped<IVerificationService, VerificationService>(provider => new VerificationService(
-        authenticatorSecretKey: builder.Configuration["AppSettings:AuthenticatorSecretKey"],
-        userVerifyService: provider.GetRequiredService<IUserVerifyService>(),
-        emailSender: provider.GetRequiredService<IEmailSender>())); 
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-        };
-    });
+builder.Services
+    .AddAuthServices(builder.Configuration)
+    .AddVerificationServices(builder.Configuration);
 
 builder.Services.AddCors(options => options.AddPolicy(name: "NgOrigins",
     policy =>
@@ -92,7 +47,6 @@ builder.Services.AddCors(options => options.AddPolicy(name: "NgOrigins",
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
