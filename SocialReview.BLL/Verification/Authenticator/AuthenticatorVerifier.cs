@@ -1,20 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
-using OtpNet;
+﻿using OtpNet;
 using SocialReview.BLL.Verification.Interfaces;
 
 namespace SocialReview.BLL.Verification.Authenticator
 {
     internal class AuthenticatorVerifier : IVerifier
     {        
-        private readonly IConfiguration _config;
-        public AuthenticatorVerifier(IConfiguration config)
+        private readonly string _authenticatorSecretKey;
+        public AuthenticatorVerifier(string authenticatorSecretKey)
         {
-            _config = config;
+            _authenticatorSecretKey = authenticatorSecretKey;
         }
 
-        public async Task<bool> VerifyAsync(string code)
+        public bool VerifyAsync(string code)
         {
-            var secretKey = Base32Encoding.ToBytes(_config.GetSection("AppSettings:AuthenticatorSecretKey").Value);
+            var secretKey = Base32Encoding.ToBytes(_authenticatorSecretKey);
             var totp = new Totp(secretKey);
             var isValid = totp.VerifyTotp(code, out long timeWindowUsed);
             return isValid;

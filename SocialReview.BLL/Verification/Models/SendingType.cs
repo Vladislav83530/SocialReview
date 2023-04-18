@@ -3,7 +3,6 @@
     public enum SendingType
     {
         Authenticator, 
-        PhoneNumber,
         Email
     }
 }

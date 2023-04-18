@@ -2,6 +2,6 @@
 {
     public interface IVerifier
     {
-        Task<bool> VerifyAsync(string code);
+        bool VerifyAsync(string code);
     }
 }

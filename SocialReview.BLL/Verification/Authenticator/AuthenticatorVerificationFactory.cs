@@ -1,15 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
-using SocialReview.BLL.Verification.Interfaces;
+﻿using SocialReview.BLL.Verification.Interfaces;
 
 namespace SocialReview.BLL.Verification.Authenticator
 {
     public class AuthenticatorVerificationFactory : IVerificationFactory
     {
-        private readonly IConfiguration _config;
+        private readonly string _authenticatorSecretKey;
 
-        public AuthenticatorVerificationFactory(IConfiguration config)
+        public AuthenticatorVerificationFactory(string authenticatorSecretKey)
         {
-            _config = config;
+            _authenticatorSecretKey = authenticatorSecretKey;
         }
 
         public ICodeSender CreateCodeSender()
@@ -19,7 +18,7 @@ namespace SocialReview.BLL.Verification.Authenticator
 
         public IVerifier CreateVerifier()
         {
-            return new AuthenticatorVerifier(_config);
+            return new AuthenticatorVerifier(_authenticatorSecretKey);
         }
     }
 }

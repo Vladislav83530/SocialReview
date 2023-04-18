@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SocialReview.BLL.Verification.Interfaces;
 using SocialReview.BLL.Verification.Models;
+using System.ComponentModel.Design;
 
 namespace SocialReview.API.Controllers
 {
@@ -17,18 +18,19 @@ namespace SocialReview.API.Controllers
         }
 
         [HttpPost("send-code")]
-        public async Task<IActionResult> SendCode(SendingType type)
+        [Authorize]
+        public async Task<IActionResult> SendCode(SendingType sendingType)
         {
-            await _verificationService.SendCodeAsync(type);
+            await _verificationService.SendCodeAsync(HttpContext, sendingType);
             return Ok();
         }
 
         [HttpPost("verify")]
         [Authorize]
-        public async Task<ActionResult> Verify(SendingType type, string code)
+        public async Task<ActionResult> Verify(SendingType sendingType, string code)
         {
-            await _verificationService.VerifyUserAsync(HttpContext, type, code);
-            return Ok();
+            await _verificationService.VerifyUserAsync(HttpContext, sendingType, code);
+            return Ok("You are successfully verified.");
         }
     }
 }

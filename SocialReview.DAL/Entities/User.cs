@@ -27,6 +27,9 @@ namespace SocialReview.DAL.Entities
         [Required]
         public bool IsVerified { get; set; }
 
+        [Required]
+        public string VerificationCode { get; set; } = string.Empty;
+
         [ForeignKey("CustomerId")]
         public Guid? CustomerId { get; set; }
         public Customer? Customer { get; set; }

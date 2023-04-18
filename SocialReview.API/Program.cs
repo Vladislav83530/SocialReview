@@ -8,7 +8,8 @@ using SocialReview.API.Middlewares.RequestLoggingMiddleware;
 using SocialReview.API.Middlewares.RequestLoggingMiddleware.Abstract;
 using SocialReview.BLL.Authentication.Interfaces;
 using SocialReview.BLL.Authentication.Services;
-using SocialReview.BLL.Verification.Authenticator;
+using SocialReview.BLL.EmailSender.Email;
+using SocialReview.BLL.EmailSender.Interfaces;
 using SocialReview.BLL.Verification.Interfaces;
 using SocialReview.BLL.Verification.Services;
 using SocialReview.DAL.EF;
@@ -55,8 +56,18 @@ builder.Services.AddScoped<IHttpExceptionHandlerStrategy, DefaultHttpExceptionHa
 builder.Services.AddScoped<RequestLoggingMiddleware>();
 builder.Services.AddScoped<ILogMessageBuilder, DefaultLogMessageBuilder>();
 
-builder.Services.AddScoped<IVerificationService, VerificationService>();
-builder.Services.AddSingleton<IVerificationFactory, AuthenticatorVerificationFactory>();
+builder.Services.AddScoped<IUserVerifyService, UserVerifyService>();
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>(provider => new SmtpEmailSender(
+       fromAddress: builder.Configuration["Email:FromAddress"],
+       fromName: builder.Configuration["Email:FromName"],
+       fromPassword: builder.Configuration["Email:FromPassword"],
+       smtpHost: builder.Configuration["Email:SmtpHost"],
+       smtpPort: int.Parse(builder.Configuration["Email:SmtpPort"])
+   ));
+builder.Services.AddScoped<IVerificationService, VerificationService>(provider => new VerificationService(
+        authenticatorSecretKey: builder.Configuration["AppSettings:AuthenticatorSecretKey"],
+        userVerifyService: provider.GetRequiredService<IUserVerifyService>(),
+        emailSender: provider.GetRequiredService<IEmailSender>())); 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => {
